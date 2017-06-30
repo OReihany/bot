@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.CodeDom;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MongoDB.Driver;
 using MyTelegramBot.AnswerHandlers;
 using MyTelegramBot.Interfaces;
@@ -129,6 +131,31 @@ namespace MyTelegramBot
         {
             var user =  Query().SingleOrDefault(it => it.UserName == answerRequest.UserName && it.IsArchived == false);
             return user != null && user.Completed();
+        }
+
+        public string GetParticipantsPhoneNumbers(bool all=true)
+        {
+            List<string> result;
+            if (all)
+                result=
+                    Query().ToList()
+                        .Select(it => $"{it.Name}  {it.PhoneNumber}")
+                        .ToList();
+            //.Aggregate((current, next) => current + ",\n " + next);
+            else
+            {
+                result =
+                    Query().Where(it => !it.IsArchived).ToList()
+                        .Select(it => $"{it.Name}  {it.PhoneNumber}")
+                        .ToList();
+                //.Aggregate((current, next) => current + ", " + next);
+            }
+            StringBuilder res = new StringBuilder();
+            foreach (var vr in result)
+            {
+                res.AppendLine(vr);
+            }
+            return res.ToString();
         }
 
         private static bool Question(IRequest message, ParticipatingInfo user, out IResponce handle)

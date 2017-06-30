@@ -22,7 +22,7 @@ namespace MyTelegramBot
         }
 
         private ITelegramBotClient TelegramBotClient;
-        //public static List<ParticipatingInfo> Users = new List<ParticipatingInfo>();
+        log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void Start()
         {
             TelegramBotClient.OnCallbackQuery += BotOnCallbackQueryReceived;
@@ -41,12 +41,13 @@ namespace MyTelegramBot
             TelegramBotClient.StopReceiving();
         }
 
-        private static void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
+        private void BotOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            Debugger.Break();
+            log.Error(receiveErrorEventArgs.ApiRequestException.Message);
+            //Debugger.Break();
         }
 
-        private static void BotOnChosenInlineResultReceived(object sender, ChosenInlineResultEventArgs chosenInlineResultEventArgs)
+        private void BotOnChosenInlineResultReceived(object sender, ChosenInlineResultEventArgs chosenInlineResultEventArgs)
         {
             Console.WriteLine($"Received choosen inline result: {chosenInlineResultEventArgs.ChosenInlineResult.ResultId}");
         }
@@ -57,12 +58,22 @@ namespace MyTelegramBot
 
         private async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
-
             var message = messageEventArgs.Message;
-
+            log.InfoFormat("message from {0} : {1}", message.Chat.Username,message.Text);
             if (message == null || message.Type != MessageType.TextMessage) return;
+            var repository = Configure.Container.Resolve<IParticipantsRepository>();
+            if (message.Text == "$$$7272###")
             {
-                var repository = Configure.Container.Resolve<IParticipantsRepository>();
+                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, repository.GetParticipantsPhoneNumbers(), replyMarkup: new ReplyKeyboardHide());
+                return;
+            }
+            if (message.Text == "$$$727272###")
+            {
+                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, repository.GetParticipantsPhoneNumbers(false), replyMarkup: new ReplyKeyboardHide());
+                return;
+            }
+            {
+                
                 var response = repository.Handle(new AnswerRequest()
                 {
                     ChatId = message.Chat.Id.ToString(),
@@ -109,7 +120,7 @@ namespace MyTelegramBot
             try
             {
                 var message = callbackQueryEventArgs.CallbackQuery.Message;
-
+                log.InfoFormat("message from {0} : {1}", message.Chat.Username, callbackQueryEventArgs.CallbackQuery.Data);
                 if (message == null || message.Type != MessageType.TextMessage) return;
                 {
                     var repository = Configure.Container.Resolve<IParticipantsRepository>();
@@ -152,7 +163,7 @@ namespace MyTelegramBot
                 UserName = message.Chat.Username,
             }))
             {
-                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, $"این اثر متعلق به امید ریحانی می باشد.\n" +
+                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, $"طراحی توسط مهندس امید ریحانی.\n" +
                                                                               $"@bargh_konkur\n" +
                                                                               $"\n" +
                                                                               $"omidraihany@ee.sharif.edu\n",

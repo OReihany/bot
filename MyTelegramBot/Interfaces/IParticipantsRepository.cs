@@ -6,5 +6,6 @@ namespace MyTelegramBot.Interfaces
     {
         IResponce Handle(IRequest message);
         bool IsCompleted(IRequest answerRequest);
+        string GetParticipantsPhoneNumbers(bool all = true);
     }
 }
