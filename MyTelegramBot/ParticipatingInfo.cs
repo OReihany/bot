@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Castle.Components.DictionaryAdapter;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 using Telegram.Bot.Types.Enums;
@@ -56,22 +54,22 @@ namespace MyTelegramBot
                 && RateAmount.HasValue;
         }
 
-        public int GetPredictedRank()
+        public string GetPredictedRank(MajorType major)
         {
-            var rate = GetTotalRate();
+            var rate = GetTotalRate(major);
             if (rate == 0)
-                return 0;
-            var rank = DecisionTable.GetRateRankMapping().FirstOrDefault(it => it.FromRate <= rate && it.ToRate >= rate && it.MajorType==this.Major.Value);
+                return "";
+            var rank = DecisionTable.GetRateRankMapping().FirstOrDefault(it => it.FromRate <= rate && it.ToRate >= rate && it.MajorType== major);
             if (rank == null)
-                return 0;
-            return rank.Rank;
+                return "";
+            return $"از {rank.FromRank}تا {rank.ToRank}";
         }
 
-        public decimal GetTotalRate()
+        public decimal GetTotalRate(MajorType major)
         {
             if (!Completed())
                 return 0;
-            switch (Major)
+            switch (major)
             {
                 case MajorType.Electronic:
                     return (EnglishPercent.Value*2 + MathPercent.Value*3 + CircutePercent.Value*3 +
@@ -105,8 +103,6 @@ namespace MyTelegramBot
                     return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
                           ElectronicsPercent.Value * 4 + MachinePercent.Value * 4 + ControllPercent.Value * 4 +
                           SignalPercent.Value * 1 + MagneticPercent.Value * 1) / (decimal)22;
-                case null:
-                    return 0;
                 default:
                     return 0;
             }
@@ -129,7 +125,12 @@ namespace MyTelegramBot
             sb.AppendLine($"درصد الکترومغناطیس : {MagneticPercent}");
             sb.AppendLine($"معدل : {RateAmount}");
             sb.AppendLine();
-            sb.AppendLine($"رتبه تخمینی شما در گرایش {Configure.GetEnumDescription(Major)} : {GetPredictedRank()}");
+            sb.AppendLine($"رتبه تخمینی شما در گرایش {Configure.GetEnumDescription(Major)} : {GetPredictedRank(this.Major.Value)}");
+            sb.AppendLine("سایر گرایش ها");
+            foreach (var otherMajor in Enum.GetValues(typeof(MajorType)).Cast<MajorType>().Where(it=>it!=this.Major))
+            {
+                sb.AppendLine($"رتبه تخمینی شما در گرایش {Configure.GetEnumDescription(otherMajor)} : {GetPredictedRank(otherMajor)}");
+            }
             return sb.ToString();
         }
         
