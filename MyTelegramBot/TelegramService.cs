@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Castle.Windsor;
 using MyTelegramBot.AnswerHandlers;
 using MyTelegramBot.Interfaces;
@@ -75,6 +76,7 @@ namespace MyTelegramBot
                 {
                     case ResponceType.Text:
                         await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, response.Message, replyMarkup: new ReplyKeyboardHide());
+                        await SendCompletionMessage(repository, message);
                         break;
                     case ResponceType.Choose:
                         {
@@ -124,6 +126,7 @@ namespace MyTelegramBot
                     {
                         case ResponceType.Text:
                             await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, response.Message, replyMarkup: new ReplyKeyboardHide());
+                            await SendCompletionMessage(repository, message);
                             break;
                         case ResponceType.Choose:
                             var keyboard = new InlineKeyboardMarkup(response.SelectionList.Select(it => new InlineKeyboardButton(it)).ToArray());
@@ -138,6 +141,22 @@ namespace MyTelegramBot
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async Task SendCompletionMessage(IParticipantsRepository repository, Message message)
+        {
+            if (repository.IsCompleted(new AnswerRequest()
+            {
+                ChatId = message.Chat.Id.ToString(),
+                UserName = message.Chat.Username,
+            }))
+            {
+                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, $"این اثر متعلق به امید ریحانی می باشد.\n" +
+                                                                              $"@bargh_konkur\n" +
+                                                                              $"\n" +
+                                                                              $"omidraihany@ee.sharif.edu\n",
+                    replyMarkup: new ReplyKeyboardHide());
             }
         }
     }

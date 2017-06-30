@@ -8,7 +8,7 @@ namespace MyTelegramBot
         Electronic =1,
         [Description("سیستم های قدرت")]
         PowerSystems =2,
-        [Description("ماشین")]
+        [Description("ماشین های الکتریکی")]
         Machine =3,
         [Description("مخابرات میدان")]
         FieldComunication =4,

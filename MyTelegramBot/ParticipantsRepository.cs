@@ -47,6 +47,7 @@ namespace MyTelegramBot
                     {
                         Message = user.ToString() + @"
                     /new - ورود مجدد
+
                     /start    - شروع
                     ",
                         UserName = message.UserName
@@ -82,6 +83,7 @@ namespace MyTelegramBot
                         {
                             Message = user.ToString() + @"
                     /new - ورود مجدد
+
                     /start    - شروع
                     ",
                             UserName = message.UserName
@@ -90,6 +92,7 @@ namespace MyTelegramBot
                     {
                         Message = @"
                     /new - ورود مجدد
+
                     /start    - شروع
                     ",
                         UserName = message.UserName
@@ -122,6 +125,12 @@ namespace MyTelegramBot
             }
         }
 
+        public bool IsCompleted(IRequest answerRequest)
+        {
+            var user =  Query().SingleOrDefault(it => it.UserName == answerRequest.UserName && it.IsArchived == false);
+            return user != null && user.Completed();
+        }
+
         private static bool Question(IRequest message, ParticipatingInfo user, out IResponce handle)
         {
             var qHandler =
@@ -134,6 +143,7 @@ namespace MyTelegramBot
                         {
                             Message = user.ToString() + @"
                     /new - ورود مجدد
+
                     /start    - شروع
                     ",
                             UserName = message.UserName
@@ -143,6 +153,7 @@ namespace MyTelegramBot
                         {
                             Message = @"
                     /new - ورود مجدد
+
                     /start    - شروع
                     ",
                             UserName = message.UserName
