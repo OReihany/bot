@@ -2,6 +2,7 @@
 {
     public abstract class BasePercentAnswerHandler : IAnswerHandler
     {
+        public virtual string Message { get; private set; }
         log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public abstract bool Accept(ParticipatingInfo participant);
 
@@ -15,11 +16,11 @@
             decimal val;
             if (!decimal.TryParse(request.Message, out val))
             {
-                return new AnswerResponse("عدد وارد کنید!!!", true);
+                return new AnswerResponse(Message, true);
             }
             if (val < -33 || val > 100)
             {
-                return new AnswerResponse("درصد بین -33 و 100 می باشد!!!", true);
+                return new AnswerResponse(Message, true);
             }
             return new AnswerResponse();
         }

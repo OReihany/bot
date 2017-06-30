@@ -2,6 +2,7 @@
 {
     public class RateAmountAnswerHandler : IAnswerHandler
     {
+        
         public bool Accept(ParticipatingInfo participant)
         {
             return participant.LastQuestion == Questions.RateAmount;
@@ -15,7 +16,7 @@
             decimal val;
             if (!decimal.TryParse(request.Message, out val))
             {
-                return new AnswerResponse("عدد وارد کنید!!!",true);
+                return new AnswerResponse("معدل بین 0 تا 20 می باشد!!!", true);
             }
             if (val < 0 || val > 20)
             {

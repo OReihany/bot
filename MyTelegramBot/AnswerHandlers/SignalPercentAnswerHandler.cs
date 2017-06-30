@@ -1,7 +1,11 @@
-namespace MyTelegramBot.AnswerHandlers
+﻿namespace MyTelegramBot.AnswerHandlers
 {
     public class SignalPercentAnswerHandler : BasePercentAnswerHandler
     {
+        public override string Message
+        {
+            get { return "درصد سیگنال عددی بین -33 تا 100 می باشد"; }
+        }
         public override bool Accept(ParticipatingInfo participant)
         {
             return participant.LastQuestion == Questions.SignalPercent;

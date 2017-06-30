@@ -1,7 +1,11 @@
-namespace MyTelegramBot.AnswerHandlers
+﻿namespace MyTelegramBot.AnswerHandlers
 {
     public class MathPercentAnswerHandler : BasePercentAnswerHandler
     {
+        public override string Message
+        {
+            get { return "درصد ریاضی عددی بین -33 تا 100 می باشد"; }
+        }
         public override bool Accept(ParticipatingInfo participant)
         {
             return participant.LastQuestion == Questions.MathPercent;

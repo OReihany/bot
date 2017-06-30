@@ -110,7 +110,10 @@
   <ItemGroup>
     <Compile Include="AnswerHandlers\AnswerRequest.cs" />
     <Compile Include="AnswerHandlers\AnswerResponse.cs" />
+    <Compile Include="AnswerHandlers\MagneticsPercentAnswerHandler.cs" />
+    <Compile Include="AnswerHandlers\PhoneNumberAnswerHandler.cs" />
     <Compile Include="Configure.cs" />
+    <Compile Include="DecisionTable.cs" />
     <Compile Include="Interfaces\IRequest.cs" />
     <Compile Include="Interfaces\IResponce.cs" />
     <Compile Include="Logger.cs" />
@@ -121,9 +124,11 @@
     <Compile Include="QuestionHandlers\EnglishPercentQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\IQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\MachinePercentQuestionHandler.cs" />
+    <Compile Include="QuestionHandlers\MagneticsPercentQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\MathPercentQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\ParticipantMajorQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\ParticipantNameQuestionHandler.cs" />
+    <Compile Include="QuestionHandlers\PhoneNumberQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\QuestionRequest.cs" />
     <Compile Include="QuestionHandlers\RateAmountQuestionHandler.cs" />
     <Compile Include="QuestionHandlers\SignalPercentQuestionHandler.cs" />
@@ -142,6 +147,7 @@
     <Compile Include="Interfaces\IParticipantsRepository.cs" />
     <Compile Include="Interfaces\ITelegramService.cs" />
     <Compile Include="Mapper.cs" />
+    <Compile Include="RateRankMapping.cs" />
     <Compile Include="WindsorInstaller.cs" />
     <Compile Include="ParticipatingInfo.cs" />
     <Compile Include="Program.cs" />

@@ -12,7 +12,9 @@
         SignalPercent = 7,
         ControllPercent = 8,
         MachinePercent = 9,
-        RateAmount = 10
+        RateAmount = 10,
+        MagneticPercent=11,
+        PhoneNumber=12
 
     }
 }

@@ -13,6 +13,7 @@
                 && participant.SignalPercent.HasValue
                 && participant.ControllPercent.HasValue
                 && participant.MachinePercent.HasValue
+                && participant.MagneticPercent.HasValue
                 && participant.RateAmount == null;
         }
 
