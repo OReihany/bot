@@ -61,7 +61,7 @@ namespace MyTelegramBot
             if (rate == 0)
                 return "";
             var ranks=Configure.Container.Resolve<IMongoDatabase>().GetCollection<DecisionData>("RateRankMapping");
-            var rank2 = ranks.AsQueryable().Where(it=>it.Balance> rate).OrderBy(it=>it.Balance).FirstOrDefault();
+            var rank2 = ranks.AsQueryable().Where(it=>it.Balance> rate && it.MajorType==major).OrderBy(it=>it.Balance).FirstOrDefault();
             //var rank = DecisionTable.GetRateRankMapping().FirstOrDefault(it => it.FromRate <= rate && it.ToRate >= rate && it.MajorType== major);
             if (rank2 == null)
                 return "";
