@@ -27,7 +27,7 @@ namespace MyTelegramBot
         {
 
             bool isNew = false;
-            var user = Query().SingleOrDefault(it => it.UserName == message.UserName && it.IsArchived==false);
+            var user = Query().SingleOrDefault(it => it.ChatId == message.ChatId && it.IsArchived==false);
             
             if (user == null)
             {
@@ -129,7 +129,7 @@ namespace MyTelegramBot
 
         public bool IsCompleted(IRequest answerRequest)
         {
-            var user =  Query().SingleOrDefault(it => it.UserName == answerRequest.UserName && it.IsArchived == false);
+            var user =  Query().SingleOrDefault(it => it.ChatId == answerRequest.ChatId && it.IsArchived == false);
             return user != null && user.Completed();
         }
 
@@ -138,14 +138,14 @@ namespace MyTelegramBot
             List<string> result;
             if (all)
                 result=
-                    Query().ToList()
+                    Query().Where(it=>it.PhoneNumber!=null).ToList()
                         .Select(it => $"{it.Name}  {it.PhoneNumber}")
                         .ToList();
             //.Aggregate((current, next) => current + ",\n " + next);
             else
             {
                 result =
-                    Query().Where(it => !it.IsArchived).ToList()
+                    Query().Where(it => it.PhoneNumber != null && !it.IsArchived).ToList()
                         .Select(it => $"{it.Name}  {it.PhoneNumber}")
                         .ToList();
                 //.Aggregate((current, next) => current + ", " + next);

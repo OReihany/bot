@@ -55,6 +55,13 @@ namespace MyTelegramBot
                 .SetIdGenerator(StringObjectIdGenerator.Instance)
                 .SetSerializer(new StringSerializer(BsonType.ObjectId));
             });
+            BsonClassMap.RegisterClassMap<DecisionData>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapIdProperty(c => c.Id)
+                .SetIdGenerator(StringObjectIdGenerator.Instance)
+                .SetSerializer(new StringSerializer(BsonType.ObjectId));
+            });
         }
     }
 }

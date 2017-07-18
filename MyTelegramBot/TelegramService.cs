@@ -59,7 +59,7 @@ namespace MyTelegramBot
         private async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
             var message = messageEventArgs.Message;
-            log.InfoFormat("message from {0} : {1}", message.Chat.Username,message.Text);
+            log.InfoFormat("message from {0} {2} : {1}", message.Chat.Username,message.Text,message.Chat.Id);
             if (message == null || message.Type != MessageType.TextMessage) return;
             var repository = Configure.Container.Resolve<IParticipantsRepository>();
             if (message.Text == "$$$7272###")
@@ -77,7 +77,7 @@ namespace MyTelegramBot
                 var response = repository.Handle(new AnswerRequest()
                 {
                     ChatId = message.Chat.Id.ToString(),
-                    UserName = message.Chat.Username.ToString(),
+                    UserName = message.Chat.Username==null?"":message.Chat.Username.ToString(),
                     Message = Configure.ConvertDigitsToLatin(message.Text),
                     FirstName = message.Chat.FirstName,
                     LastName = message.Chat.LastName,
@@ -120,14 +120,14 @@ namespace MyTelegramBot
             try
             {
                 var message = callbackQueryEventArgs.CallbackQuery.Message;
-                log.InfoFormat("message from {0} : {1}", message.Chat.Username, callbackQueryEventArgs.CallbackQuery.Data);
+                log.InfoFormat("message from {0} {2} : {1}", message.Chat.Username, callbackQueryEventArgs.CallbackQuery.Data,message.Chat.Id);
                 if (message == null || message.Type != MessageType.TextMessage) return;
                 {
                     var repository = Configure.Container.Resolve<IParticipantsRepository>();
                     var response = repository.Handle(new AnswerRequest()
                     {
                         ChatId = message.Chat.Id.ToString(),
-                        UserName = message.Chat.Username.ToString(),
+                        UserName = message.Chat.Username == null ? "" : message.Chat.Username.ToString(),
                         Message = Configure.ConvertDigitsToLatin(callbackQueryEventArgs.CallbackQuery.Data),
                         FirstName = message.Chat.FirstName,
                         LastName = message.Chat.LastName,
@@ -160,10 +160,11 @@ namespace MyTelegramBot
             if (repository.IsCompleted(new AnswerRequest()
             {
                 ChatId = message.Chat.Id.ToString(),
-                UserName = message.Chat.Username,
+                UserName = message.Chat.Username == null ? "" : message.Chat.Username.ToString(),
             }))
             {
-                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, $"طراحی توسط مهندس امید ریحانی.\n" +
+                await TelegramBotClient.SendTextMessageAsync(message.Chat.Id, $"تیم تخصصی گروه ارشد برق پارسه\n" +
+                                                                              $"تحت نظارت علمی استاد امید ریحانی.\n" +
                                                                               $"@bargh_konkur\n" +
                                                                               $"\n" +
                                                                               $"omidraihany@ee.sharif.edu\n",

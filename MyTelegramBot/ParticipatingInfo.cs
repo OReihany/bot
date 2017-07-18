@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
+using MongoDB.Driver;
 using Telegram.Bot.Types.Enums;
 
 namespace MyTelegramBot
@@ -59,10 +60,12 @@ namespace MyTelegramBot
             var rate = GetTotalRate(major);
             if (rate == 0)
                 return "";
-            var rank = DecisionTable.GetRateRankMapping().FirstOrDefault(it => it.FromRate <= rate && it.ToRate >= rate && it.MajorType== major);
-            if (rank == null)
+            var ranks=Configure.Container.Resolve<IMongoDatabase>().GetCollection<DecisionData>("RateRankMapping");
+            var rank2 = ranks.AsQueryable().Where(it=>it.Balance> rate).OrderBy(it=>it.Balance).FirstOrDefault();
+            //var rank = DecisionTable.GetRateRankMapping().FirstOrDefault(it => it.FromRate <= rate && it.ToRate >= rate && it.MajorType== major);
+            if (rank2 == null)
                 return "";
-            return $"از {rank.FromRank}تا {rank.ToRank}";
+            return $"رتبه {rank2.Rank}";
         }
 
         public decimal GetTotalRate(MajorType major)
@@ -72,37 +75,37 @@ namespace MyTelegramBot
             switch (major)
             {
                 case MajorType.Electronic:
-                    return (EnglishPercent.Value*2 + MathPercent.Value*3 + CircutePercent.Value*3 +
-                           ElectronicsPercent.Value*4 + MachinePercent.Value*1 + ControllPercent.Value*1 +
-                           SignalPercent.Value*2 + MagneticPercent.Value*2)/(decimal)18;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 4 + MachinePercent.Value * 1 + ControllPercent.Value * 1 +
+                           SignalPercent.Value * 2 + MagneticPercent.Value * 2) / (decimal)18) / (decimal)65.23) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.PowerSystems:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
                            ElectronicsPercent.Value * 1 + MachinePercent.Value * 4 + ControllPercent.Value * 2 +
-                           SignalPercent.Value * 1 + MagneticPercent.Value * 2) / (decimal)18;
+                           SignalPercent.Value * 1 + MagneticPercent.Value * 2) / (decimal)18) / (decimal)50) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.Machine:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
                            ElectronicsPercent.Value * 1 + MachinePercent.Value * 4 + ControllPercent.Value * 2 +
-                           SignalPercent.Value * 2 + MagneticPercent.Value * 1) / (decimal)18;
+                           SignalPercent.Value * 2 + MagneticPercent.Value * 1) / (decimal)18) / (decimal)57.5) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.FieldComunication:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
-                          ElectronicsPercent.Value * 2 + MachinePercent.Value * 1 + ControllPercent.Value * 1 +
-                          SignalPercent.Value * 2 + MagneticPercent.Value * 4) / (decimal)18;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 2 + MachinePercent.Value * 1 + ControllPercent.Value * 1 +
+                           SignalPercent.Value * 2 + MagneticPercent.Value * 4) / (decimal)18) / (decimal)63.9) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.SystemComunication:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
-                          ElectronicsPercent.Value * 2 + MachinePercent.Value * 1 + ControllPercent.Value * 1 +
-                          SignalPercent.Value * 4 + MagneticPercent.Value * 2) / (decimal)18;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 2 + MachinePercent.Value * 1 + ControllPercent.Value * 1 +
+                           SignalPercent.Value * 4 + MagneticPercent.Value * 2) / (decimal)18) / (decimal)63.9) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.Control:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
-                          ElectronicsPercent.Value * 1 + MachinePercent.Value * 2 + ControllPercent.Value * 4 +
-                          SignalPercent.Value * 2 + MagneticPercent.Value * 1) / (decimal)18;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 1 + MachinePercent.Value * 2 + ControllPercent.Value * 4 +
+                           SignalPercent.Value * 2 + MagneticPercent.Value * 1) / (decimal)18) / (decimal)59.52) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.MedicalEngineering:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
-                          ElectronicsPercent.Value * 3 + MachinePercent.Value * 1 + ControllPercent.Value * 4 +
-                          SignalPercent.Value * 4 + MagneticPercent.Value * 1) / (decimal)21;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 3 + MachinePercent.Value * 1 + ControllPercent.Value * 4 +
+                           SignalPercent.Value * 4 + MagneticPercent.Value * 1) / (decimal)21) / (decimal)59.5) * (decimal)80) + RateAmount.Value) * 100;
                 case MajorType.Mecatronic:
-                    return (EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
-                          ElectronicsPercent.Value * 4 + MachinePercent.Value * 4 + ControllPercent.Value * 4 +
-                          SignalPercent.Value * 1 + MagneticPercent.Value * 1) / (decimal)22;
+                    return (((((EnglishPercent.Value * 2 + MathPercent.Value * 3 + CircutePercent.Value * 3 +
+                           ElectronicsPercent.Value * 4 + MachinePercent.Value * 4 + ControllPercent.Value * 4 +
+                           SignalPercent.Value * 1 + MagneticPercent.Value * 1) / (decimal)22) / (decimal)45.2) * (decimal)80) + RateAmount.Value) * 100;
                 default:
                     return 0;
             }
